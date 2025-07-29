@@ -1,0 +1,38 @@
+import { realArxivAnalyzer, type RealAnalysisResults } from "./real-arxiv-analyzer"
+
+export interface FormData {
+  fieldOfStudy: string
+  yearsOfExperience: string
+  skills: string[]
+  ageGroup: string
+  industryExperience: string
+}
+
+export type AnalysisResults = RealAnalysisResults
+
+export class ResearchService {
+  async analyzeOpportunities(formData: FormData): Promise<AnalysisResults> {
+    console.log("🔍 Starting real dataset analysis...")
+    console.log("📊 User profile:", formData)
+
+    try {
+      const results = await realArxivAnalyzer.analyzeUserProfile({
+        fieldOfStudy: formData.fieldOfStudy,
+        skills: formData.skills,
+        yearsOfExperience: formData.yearsOfExperience,
+      })
+
+      console.log("✅ Analysis complete!")
+      console.log(`📈 Found ${results.insights.totalPapers} relevant papers`)
+      console.log(`🔬 Identified ${results.researchFields.length} research opportunities`)
+      console.log(`👨‍🔬 Found ${results.researchers.length} key researchers`)
+
+      return results
+    } catch (error) {
+      console.error("❌ Analysis failed:", error)
+      throw error
+    }
+  }
+}
+
+export const researchService = new ResearchService()
