@@ -47,8 +47,9 @@ export class RealArxivAnalyzer {
     yearsOfExperience: string
     publicationYearFrom?: string
     publicationYearTo?: string
-    authorName?: string
-    journalOrDoi?: string
+    // Removed: authorName?: string
+    // Removed: journalOrDoi?: string
+    // Removed: ageGroup?: string // This was not used for filtering, only for type definition
   }): Promise<RealAnalysisResults> {
     console.log("🔄 Loading real arXiv dataset from Supabase...")
     await datasetLoader.loadDataset()
@@ -78,15 +79,15 @@ export class RealArxivAnalyzer {
       console.log(`📅 After year range filter: ${filteredPapers.length} papers`)
     }
 
-    if (formData.authorName) {
-      filteredPapers = datasetLoader.filterByAuthor(formData.authorName, filteredPapers)
-      console.log(`✍️ After author filter: ${filteredPapers.length} papers`)
-    }
+    // Removed: if (formData.authorName) {
+    // Removed:   filteredPapers = datasetLoader.filterByAuthor(formData.authorName, filteredPapers)
+    // Removed:   console.log(`✍️ After author filter: ${filteredPapers.length} papers`)
+    // Removed: }
 
-    if (formData.journalOrDoi) {
-      filteredPapers = datasetLoader.filterByJournalOrDoi(formData.journalOrDoi, filteredPapers)
-      console.log(`📄 After journal/DOI filter: ${filteredPapers.length} papers`)
-    }
+    // Removed: if (formData.journalOrDoi) {
+    // Removed:   filteredPapers = datasetLoader.filterByJournalOrDoi(formData.journalOrDoi, filteredPapers)
+    // Removed:   console.log(`📄 After journal/DOI filter: ${filteredPapers.length} papers`)
+    // Removed: }
 
     // If no papers match after all filters, return an empty result set
     if (filteredPapers.length === 0) {

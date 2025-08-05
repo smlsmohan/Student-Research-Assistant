@@ -4,13 +4,12 @@ export interface FormData {
   fieldOfStudy: string
   yearsOfExperience: string
   skills: string[]
-  ageGroup: string
+  // Removed: ageGroup: string
   industryExperience: string
-  // New filter fields
   publicationYearFrom?: string
   publicationYearTo?: string
-  authorName?: string
-  journalOrDoi?: string
+  // Removed: authorName?: string
+  // Removed: journalOrDoi?: string
 }
 
 export type AnalysisResults = RealAnalysisResults
@@ -27,8 +26,8 @@ export class ResearchService {
         yearsOfExperience: formData.yearsOfExperience,
         publicationYearFrom: formData.publicationYearFrom,
         publicationYearTo: formData.publicationYearTo,
-        authorName: formData.authorName,
-        journalOrDoi: formData.journalOrDoi,
+        // Removed: authorName: formData.authorName,
+        // Removed: journalOrDoi: formData.journalOrDoi,
       })
 
       console.log("✅ Analysis complete!")

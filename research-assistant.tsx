@@ -7,7 +7,6 @@ import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Badge } from "@/components/ui/badge"
 import { Search } from "lucide-react"
 import { researchService, type FormData as ResearchFormData, type AnalysisResults } from "./lib/research-service"
@@ -19,12 +18,12 @@ export default function Component() {
     fieldOfStudy: "",
     yearsOfExperience: "",
     skills: [],
-    ageGroup: "",
+    // Removed: ageGroup: "",
     industryExperience: "",
-    publicationYearFrom: "", // New state
-    publicationYearTo: "", // New state
-    authorName: "", // New state
-    journalOrDoi: "", // New state
+    publicationYearFrom: "",
+    publicationYearTo: "",
+    // Removed: authorName: "",
+    // Removed: journalOrDoi: "",
   })
   const [showResults, setShowResults] = useState(false)
   const [skillInput, setSkillInput] = useState("")
@@ -286,43 +285,9 @@ export default function Component() {
                   />
                 </div>
 
-                {/* Author Name */}
-                <div className="space-y-2">
-                  <Label htmlFor="authorName">Author Name</Label>
-                  <Input
-                    id="authorName"
-                    placeholder="e.g., Albert Einstein"
-                    value={formData.authorName}
-                    onChange={(e) => setFormData((prev) => ({ ...prev, authorName: e.target.value }))}
-                  />
-                </div>
-
-                {/* Journal/DOI */}
-                <div className="space-y-2">
-                  <Label htmlFor="journalOrDoi">Journal Reference or DOI</Label>
-                  <Input
-                    id="journalOrDoi"
-                    placeholder="e.g., Phys. Rev. Lett. or 10.1103/..."
-                    value={formData.journalOrDoi}
-                    onChange={(e) => setFormData((prev) => ({ ...prev, journalOrDoi: e.target.value }))}
-                  />
-                </div>
-
-                {/* Age Group */}
-                <div className="space-y-2">
-                  <Label htmlFor="age">Age Group</Label>
-                  <Select onValueChange={(value) => setFormData((prev) => ({ ...prev, ageGroup: value }))}>
-                    <SelectTrigger>
-                      <SelectValue placeholder="Select age group" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="under-20">{"<20"}</SelectItem>
-                      <SelectItem value="20-25">20–25</SelectItem>
-                      <SelectItem value="26-30">26–30</SelectItem>
-                      <SelectItem value="31-plus">31+</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
+                {/* Removed: Author Name */}
+                {/* Removed: Journal/DOI */}
+                {/* Removed: Age Group */}
 
                 {/* Industry Experience */}
                 <div className="space-y-2">
