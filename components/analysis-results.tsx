@@ -30,10 +30,10 @@ export function AnalysisResultsComponent({ results, isLoading }: AnalysisResults
         <div className="text-center">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
           <h2 className="text-2xl font-bold text-slate-900 mb-2">Analyzing Real arXiv Dataset</h2>
-          <p className="text-slate-600">Connecting to Supabase and processing actual research papers...</p>
+          <p className="text-slate-600">Fetching and processing actual research papers via server...</p>
           <div className="mt-4 space-y-2 text-sm text-slate-500">
-            <p>🔗 Establishing secure database connection</p>
-            <p>📥 Fetching paper metadata and abstracts</p>
+            <p>🔗 Establishing secure database connection (server-side)</p>
+            <p>📥 Fetching paper metadata and abstracts (server-side)</p>
             <p>📊 Calculating growth trends and statistics</p>
             <p>🎯 Matching papers to your profile</p>
             <p>👨‍🔬 Identifying key researchers</p>
@@ -303,8 +303,8 @@ export function AnalysisResultsComponent({ results, isLoading }: AnalysisResults
           <div className="flex items-center gap-2 text-sm text-slate-600">
             <BookOpen className="h-4 w-4" />
             <span>
-              ✅ Analysis based on <strong>real arXiv dataset</strong> fetched from Supabase. Processed{" "}
-              {results.insights.datasetInfo.loadedPapers.toLocaleString()} actual papers spanning{" "}
+              ✅ Analysis based on <strong>real arXiv dataset</strong> fetched from Supabase via a secure server action.
+              Processed {results.insights.datasetInfo.loadedPapers.toLocaleString()} actual papers spanning{" "}
               {results.insights.datasetInfo.dateRange}. Found {results.insights.totalPapers.toLocaleString()} papers
               directly relevant to your profile (
               {results.insights.datasetInfo.loadedPapers > 0

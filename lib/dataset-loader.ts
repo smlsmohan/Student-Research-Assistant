@@ -1,11 +1,5 @@
-// Real dataset loader for arXiv data using Supabase
-import { createClient } from "@supabase/supabase-js"
-
-// Supabase credentials (replace with environment variables in production!)
-const supabaseUrl = "https://bfbhbaipgbbzdhghrjho.supabase.co"
-const supabaseKey =
-  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJmYmhiYWlwZ2JhemRoZ2hyamhvIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTQzODI5NjIsImV4cCI6MjA2OTk1ODk2Mn0.7GD80L7vxTKlnRSPVdq0LDNDmedT6oM3kV6qFgMFAOQ"
-const supabase = createClient(supabaseUrl, supabaseKey)
+// Real dataset loader for arXiv data using Supabase via Server Actions
+import { getArxivPapersFromSupabase } from "@/app/actions/arxiv-data" // Import the Server Action
 
 export interface ArxivDatasetEntry {
   id: string
@@ -36,29 +30,15 @@ export class DatasetLoader {
     if (this.isLoaded) return
 
     try {
-      console.log("Connecting to Supabase and fetching arXiv data...")
-      // Fetch a limited number of papers for demonstration
-      // In a real app, you'd implement pagination or more specific queries
-      const { data, error } = await supabase.from("papers").select("*").limit(100) // Fetching 100 papers for demo
-
-      if (error) {
-        console.error("Error fetching papers from Supabase:", error)
-        throw new Error("Failed to fetch papers from database")
-      }
-
-      this.dataset = data.map((item) => ({
-        ...item,
-        // Ensure authors_parsed is an array of arrays, assuming it's stored as JSON string
-        authors_parsed: typeof item.authors_parsed === "string" ? JSON.parse(item.authors_parsed) : item.authors_parsed,
-        // Ensure update_date is a string that can be parsed by Date
-        update_date: item.update_date || new Date().toISOString().split("T")[0], // Fallback
-      })) as ArxivDatasetEntry[]
-
+      console.log("Client-side: Requesting arXiv data via Server Action...")
+      // Call the Server Action to fetch data
+      this.dataset = await getArxivPapersFromSupabase()
       this.isLoaded = true
-      console.log(`Successfully loaded ${this.dataset.length} papers from Supabase.`)
+
+      console.log(`Client-side: Successfully received ${this.dataset.length} papers from Server Action.`)
     } catch (error) {
-      console.error("Failed to load dataset:", error)
-      throw new Error("Dataset loading failed")
+      console.error("Client-side: Failed to load dataset via Server Action:", error)
+      throw new Error("Dataset loading failed via server action")
     }
   }
 
