@@ -24,11 +24,20 @@ export async function getArxivPapersFromSupabase(): Promise<ArxivDatasetEntry[]>
     }
 
     const papers: ArxivDatasetEntry[] = data.map((item) => ({
-      ...item,
-      // Ensure authors_parsed is an array of arrays, assuming it's stored as JSON string
+      id: item.id,
+      submitter: item.submitter,
+      authors: item.authors,
+      title: item.title,
+      comments: item.comments,
+      "journal-ref": item.journal_ref,
+      doi: item.doi,
+      "report-no": item.report_no,
+      categories: item.categories,
+      license: item.license,
+      abstract: item.abstract,
+      versions: item.versions,
+      update_date: item.update_date,
       authors_parsed: typeof item.authors_parsed === "string" ? JSON.parse(item.authors_parsed) : item.authors_parsed,
-      // Ensure update_date is a string that can be parsed by Date
-      update_date: item.update_date || new Date().toISOString().split("T")[0], // Fallback
     })) as ArxivDatasetEntry[]
 
     console.log(`Server Action: Successfully fetched ${papers.length} papers.`)
