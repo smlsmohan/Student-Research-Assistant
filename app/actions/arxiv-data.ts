@@ -11,6 +11,31 @@ const supabaseKey =
 
 const supabase = createClient(supabaseUrl, supabaseKey)
 
+/**
+ * Parses the authors_parsed string, attempting to handle non-strict JSON formats
+ * like JavaScript array literals with single quotes.
+ */
+function parseAuthorsParsedString(authorsParsedStr: string): Array<[string, string, string]> {
+  if (!authorsParsedStr) {
+    return []
+  }
+  try {
+    // Attempt to parse as strict JSON first
+    return JSON.parse(authorsParsedStr)
+  } catch (e) {
+    console.warn("Failed to parse authors_parsed as strict JSON, attempting lenient parse:", authorsParsedStr, e)
+    // If it fails, assume it's a JS literal with single quotes and try to fix
+    // This is a heuristic and might not cover all edge cases, especially if single quotes are part of the data
+    const cleanedStr = authorsParsedStr.replace(/'/g, '"')
+    try {
+      return JSON.parse(cleanedStr)
+    } catch (e2) {
+      console.error("Failed to parse authors_parsed even after cleaning (returning empty array):", authorsParsedStr, e2)
+      return [] // Return empty array on persistent failure
+    }
+  }
+}
+
 export async function getArxivPapersFromSupabase(): Promise<ArxivDatasetEntry[]> {
   console.log("Server Action: Fetching arXiv data from Supabase...")
   try {
@@ -36,8 +61,8 @@ export async function getArxivPapersFromSupabase(): Promise<ArxivDatasetEntry[]>
       license: item.license,
       abstract: item.abstract,
       versions: item.versions,
-      update_date: item.update_date,
-      authors_parsed: typeof item.authors_parsed === "string" ? JSON.parse(item.authors_parsed) : item.authors_parsed,
+      update_date: item.update_date || new Date().toISOString().split("T")[0], // Fallback
+      authors_parsed: parseAuthorsParsedString(item.authors_parsed), // Use the new helper function
     })) as ArxivDatasetEntry[]
 
     console.log(`Server Action: Successfully fetched ${papers.length} papers.`)
