@@ -63,31 +63,74 @@ export default function Component() {
     }
   }
 
-  const mockResults = {
+  const mockResults: AnalysisResults = {
     researchFields: [
-      { field: "Artificial Intelligence & Machine Learning", demand: "Very High", growth: "+45%" },
-      { field: "Sustainable Energy Systems", demand: "High", growth: "+38%" },
-      { field: "Biotechnology & Genomics", demand: "High", growth: "+32%" },
-      { field: "Quantum Computing", demand: "Emerging", growth: "+67%" },
-    ],
-    countries: [
-      { country: "Germany", funding: "€2.8B", programs: "Horizon Europe, DFG", strength: "Engineering & Tech" },
-      { country: "Netherlands", funding: "€1.2B", programs: "NWO, ERC", strength: "Life Sciences" },
-      { country: "Switzerland", funding: "€980M", programs: "SNF, EU Programs", strength: "Innovation Hub" },
-      { country: "Sweden", funding: "€750M", programs: "Vinnova, Formas", strength: "Sustainability" },
-    ],
-    researchers: [
-      { name: "Prof. Elena Rodriguez", institution: "ETH Zurich", field: "AI Ethics", papers: 127, hIndex: 34 },
-      { name: "Dr. Marcus Chen", institution: "TU Delft", field: "Renewable Energy", papers: 89, hIndex: 28 },
-      { name: "Prof. Sarah Johnson", institution: "KTH Stockholm", field: "Quantum Systems", papers: 156, hIndex: 41 },
       {
-        name: "Dr. Ahmed Hassan",
-        institution: "Max Planck Institute",
-        field: "Biotechnology",
-        papers: 203,
-        hIndex: 52,
+        field: "Artificial Intelligence & Machine Learning",
+        demand: "Very High",
+        growth: "+45%",
+        description: "Mock data based on AI/ML trends.",
+        relatedPapers: 1500,
+        topInstitutions: ["MIT", "Stanford University"],
+        keyResearchers: ["Prof. A. Turing", "Dr. G. Hinton"],
+        samplePapers: [
+          { title: "The AI Revolution", authors: "A. Turing et al.", year: "2023", id: "mock:1" },
+          { title: "Machine Learning Breakthroughs", authors: "G. Hinton et al.", year: "2022", id: "mock:2" },
+        ],
+      },
+      {
+        field: "Sustainable Energy Systems",
+        demand: "High",
+        growth: "+38%",
+        description: "Mock data based on energy research trends.",
+        relatedPapers: 800,
+        topInstitutions: ["ETH Zurich", "TU Delft"],
+        keyResearchers: ["Prof. E. Rodriguez", "Dr. M. Chen"],
+        samplePapers: [
+          { title: "Future of Green Energy", authors: "E. Rodriguez et al.", year: "2023", id: "mock:3" },
+          { title: "Advanced Solar Cells", authors: "M. Chen et al.", year: "2022", id: "mock:4" },
+        ],
       },
     ],
+    researchers: [
+      {
+        name: "Prof. Elena Rodriguez",
+        institution: "ETH Zurich",
+        field: "AI Ethics",
+        papers: 127,
+        hIndex: 34,
+        recentPapers: ["Ethical AI in Practice", "Bias in Algorithms"],
+        topPaper: "Ethical AI in Practice",
+      },
+      {
+        name: "Dr. Marcus Chen",
+        institution: "TU Delft",
+        field: "Renewable Energy",
+        papers: 89,
+        hIndex: 28,
+        recentPapers: ["Next-Gen Solar Panels", "Wind Turbine Efficiency"],
+        topPaper: "Next-Gen Solar Panels",
+      },
+    ],
+    insights: {
+      totalPapers: 2300, // Sum of relatedPapers from mock researchFields
+      trendingFields: ["Artificial Intelligence & Machine Learning", "Sustainable Energy Systems"],
+      recommendedActions: [
+        "Explore interdisciplinary research opportunities.",
+        "Focus on foundational research in identified trending areas.",
+        "Target high-growth research areas for maximum career impact.",
+      ],
+      datasetInfo: {
+        loadedPapers: 10000, // A mock number for total loaded papers
+        dateRange: "2015 - 2024", // A mock date range
+        topCategories: ["Computer Science", "Physics", "Life Sciences"],
+        fieldDistribution: {
+          "Computer Science": 5000,
+          Physics: 3000,
+          "Life Sciences": 2000,
+        },
+      },
+    },
   }
 
   return (
