@@ -109,26 +109,88 @@ export class DatasetLoader {
     return this.dataset
   }
 
-  searchByField(field: string): ArxivDatasetEntry[] {
+  searchByField(field: string, papersToFilter: ArxivDatasetEntry[] = this.dataset): ArxivDatasetEntry[] {
     const relevantCategories = fieldMap[field] || []
+    if (relevantCategories.length === 0) return papersToFilter // If field not found, return original list
 
-    return this.dataset.filter((paper) => relevantCategories.some((cat) => paper.categories.includes(cat)))
+    return papersToFilter.filter((paper) => relevantCategories.some((cat) => paper.categories.includes(cat)))
   }
 
-  searchByKeywords(keywords: string[]): ArxivDatasetEntry[] {
-    if (keywords.length === 0) return []
+  searchByKeywords(keywords: string[], papersToFilter: ArxivDatasetEntry[] = this.dataset): ArxivDatasetEntry[] {
+    if (keywords.length === 0) return papersToFilter
 
-    return this.dataset.filter((paper) => {
-      const searchText = `${paper.title} ${paper.abstract} ${paper.categories}`.toLowerCase() // Include categories in search
+    return papersToFilter.filter((paper) => {
+      const searchText = `${paper.title} ${paper.abstract} ${paper.categories} ${paper.authors}`.toLowerCase() // Include categories and authors in search
       return keywords.some((keyword) => searchText.includes(keyword.toLowerCase()))
     })
   }
 
-  getAuthorStats(): Record<string, { papers: number; categories: Set<string>; recentPapers: ArxivDatasetEntry[] }> {
+  filterByYearRange(
+    fromYear: string | undefined,
+    toYear: string | undefined,
+    papersToFilter: ArxivDatasetEntry[] = this.dataset,
+  ): ArxivDatasetEntry[] {
+    const startYear = fromYear ? Number.parseInt(fromYear) : null
+    const endYear = toYear ? Number.parseInt(toYear) : null
+
+    if (startYear === null && endYear === null) {
+      return papersToFilter
+    }
+
+    return papersToFilter.filter((paper) => {
+      const paperYear = new Date(paper.update_date).getFullYear()
+      const matchesFrom = startYear === null || paperYear >= startYear
+      const matchesTo = endYear === null || paperYear <= endYear
+      return matchesFrom && matchesTo
+    })
+  }
+
+  filterByAuthor(
+    authorName: string | undefined,
+    papersToFilter: ArxivDatasetEntry[] = this.dataset,
+  ): ArxivDatasetEntry[] {
+    if (!authorName || authorName.trim() === "") {
+      return papersToFilter
+    }
+    const lowerCaseAuthorName = authorName.toLowerCase()
+    return papersToFilter.filter((paper) => {
+      // Check both the raw authors string and parsed authors
+      const rawAuthorMatch = paper.authors.toLowerCase().includes(lowerCaseAuthorName)
+      const parsedAuthorMatch =
+        Array.isArray(paper.authors_parsed) &&
+        paper.authors_parsed.some(
+          ([lastName, firstName]) =>
+            `${firstName} ${lastName}`.toLowerCase().includes(lowerCaseAuthorName) ||
+            lastName.toLowerCase().includes(lowerCaseAuthorName) ||
+            firstName.toLowerCase().includes(lowerCaseAuthorName),
+        )
+      return rawAuthorMatch || parsedAuthorMatch
+    })
+  }
+
+  filterByJournalOrDoi(
+    query: string | undefined,
+    papersToFilter: ArxivDatasetEntry[] = this.dataset,
+  ): ArxivDatasetEntry[] {
+    if (!query || query.trim() === "") {
+      return papersToFilter
+    }
+    const lowerCaseQuery = query.toLowerCase()
+    return papersToFilter.filter((paper) => {
+      const journalMatch = paper["journal-ref"]?.toLowerCase().includes(lowerCaseQuery)
+      const doiMatch = paper.doi?.toLowerCase().includes(lowerCaseQuery)
+      return journalMatch || doiMatch
+    })
+  }
+
+  getAuthorStats(
+    papersToAnalyze: ArxivDatasetEntry[] = this.dataset,
+  ): Record<string, { papers: number; categories: Set<string>; recentPapers: ArxivDatasetEntry[] }> {
     const authorStats: Record<string, { papers: number; categories: Set<string>; recentPapers: ArxivDatasetEntry[] }> =
       {}
 
-    this.dataset.forEach((paper) => {
+    papersToAnalyze.forEach((paper) => {
+      // Use papersToAnalyze here
       // Ensure authors_parsed is an array before iterating
       if (Array.isArray(paper.authors_parsed)) {
         paper.authors_parsed.forEach(([lastName, firstName]) => {
@@ -151,10 +213,13 @@ export class DatasetLoader {
     return authorStats
   }
 
-  getCategoryTrends(): Record<string, { count: number; recentGrowth: number; papers: ArxivDatasetEntry[] }> {
+  getCategoryTrends(
+    papersToAnalyze: ArxivDatasetEntry[] = this.dataset,
+  ): Record<string, { count: number; recentGrowth: number; papers: ArxivDatasetEntry[] }> {
     const categoryStats: Record<string, { papers: ArxivDatasetEntry[]; count: number }> = {}
 
-    this.dataset.forEach((paper) => {
+    papersToAnalyze.forEach((paper) => {
+      // Use papersToAnalyze here
       paper.categories.split(" ").forEach((category) => {
         if (!categoryStats[category]) {
           categoryStats[category] = { papers: [], count: 0 }
@@ -168,7 +233,8 @@ export class DatasetLoader {
 
     Object.entries(categoryStats).forEach(([category, stats]) => {
       // Use a dynamic cutoff date based on the dataset's age, or a fixed recent period
-      const latestYear = this.dataset.reduce(
+      const latestYear = papersToAnalyze.reduce(
+        // Use papersToAnalyze here
         (maxYear, p) => Math.max(maxYear, new Date(p.update_date).getFullYear()),
         0,
       )
@@ -186,7 +252,8 @@ export class DatasetLoader {
         const yearsRecent = latestYear - cutoffYear
         const yearsOlder =
           cutoffYear -
-          this.dataset.reduce(
+          papersToAnalyze.reduce(
+            // Use papersToAnalyze here
             (minYear, p) => Math.min(minYear, new Date(p.update_date).getFullYear()),
             new Date().getFullYear(),
           )

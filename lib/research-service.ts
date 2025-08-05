@@ -6,6 +6,11 @@ export interface FormData {
   skills: string[]
   ageGroup: string
   industryExperience: string
+  // New filter fields
+  publicationYearFrom?: string
+  publicationYearTo?: string
+  authorName?: string
+  journalOrDoi?: string
 }
 
 export type AnalysisResults = RealAnalysisResults
@@ -20,6 +25,10 @@ export class ResearchService {
         fieldOfStudy: formData.fieldOfStudy,
         skills: formData.skills,
         yearsOfExperience: formData.yearsOfExperience,
+        publicationYearFrom: formData.publicationYearFrom,
+        publicationYearTo: formData.publicationYearTo,
+        authorName: formData.authorName,
+        journalOrDoi: formData.journalOrDoi,
       })
 
       console.log("✅ Analysis complete!")

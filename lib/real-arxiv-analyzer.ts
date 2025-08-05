@@ -1,4 +1,4 @@
-import { datasetLoader, type ArxivDatasetEntry } from "./dataset-loader"
+import { datasetLoader, type ArxivDatasetEntry, categoryNames } from "./dataset-loader"
 
 export interface RealAnalysisResults {
   researchFields: Array<{
@@ -39,40 +39,16 @@ export interface RealAnalysisResults {
 }
 
 export class RealArxivAnalyzer {
-  private categoryNames: Record<string, string> = {
-    "cs.AI": "Artificial Intelligence",
-    "cs.CL": "Natural Language Processing",
-    "cs.CV": "Computer Vision",
-    "cs.LG": "Machine Learning",
-    "cs.RO": "Robotics",
-    "hep-ph": "High Energy Physics - Phenomenology",
-    "gr-qc": "General Relativity and Quantum Cosmology",
-    "astro-ph": "Astrophysics",
-    "astro-ph.HE": "High Energy Astrophysical Phenomena",
-    "math.CO": "Combinatorics",
-    "math.AG": "Algebraic Geometry",
-    "q-bio": "Quantitative Biology",
-    "q-bio.BM": "Biomolecules",
-    "physics.bio-ph": "Biological Physics",
-    "cs.CG": "Computational Geometry",
-    "econ.EM": "Econometrics", // Added for completeness
-    "stat.ML": "Statistical Machine Learning", // Added for completeness
-    "physics.gen-ph": "General Physics", // Added for completeness
-    "cond-mat": "Condensed Matter", // Added for completeness
-    math: "Mathematics (General)", // Added for completeness
-    physics: "Physics (General)", // Added for completeness
-    "q-fin": "Quantitative Finance", // Added for completeness
-    "stat.AP": "Applications (Statistics)", // Added for completeness
-    "physics.app-ph": "Applied Physics", // Added for completeness
-    "physics.chem-ph": "Chemical Physics", // Added for completeness
-    "physics.ao-ph": "Atmospheric and Oceanic Physics", // Added for completeness
-    "physics.geo-ph": "Geophysics", // Added for completeness
-  }
+  private categoryNames = categoryNames // Use the exported categoryNames
 
   async analyzeUserProfile(formData: {
     fieldOfStudy: string
     skills: string[]
     yearsOfExperience: string
+    publicationYearFrom?: string
+    publicationYearTo?: string
+    authorName?: string
+    journalOrDoi?: string
   }): Promise<RealAnalysisResults> {
     console.log("🔄 Loading real arXiv dataset from Supabase...")
     await datasetLoader.loadDataset()
@@ -80,30 +56,70 @@ export class RealArxivAnalyzer {
     const dataset = datasetLoader.getDataset()
     console.log(`📊 Loaded ${dataset.length} real papers from Supabase`)
 
-    // Get papers relevant to user's field
-    const fieldPapers = datasetLoader.searchByField(formData.fieldOfStudy)
-    console.log(`🎯 Found ${fieldPapers.length} papers in ${formData.fieldOfStudy}`)
+    let filteredPapers: ArxivDatasetEntry[] = dataset
 
-    // Get papers matching user's skills
-    const skillPapers = datasetLoader.searchByKeywords(formData.skills)
-    console.log(`🔍 Found ${skillPapers.length} papers matching skills: ${formData.skills.join(", ")}`)
+    // Apply filters sequentially
+    if (formData.fieldOfStudy) {
+      filteredPapers = datasetLoader.searchByField(formData.fieldOfStudy, filteredPapers)
+      console.log(`🎯 After fieldOfStudy filter: ${filteredPapers.length} papers`)
+    }
 
-    // Combine and deduplicate
-    const relevantPapers = this.deduplicatePapers([...fieldPapers, ...skillPapers])
-    console.log(`✅ Total relevant papers after deduplication: ${relevantPapers.length}`)
+    if (formData.skills && formData.skills.length > 0) {
+      filteredPapers = datasetLoader.searchByKeywords(formData.skills, filteredPapers)
+      console.log(`🔍 After skills filter: ${filteredPapers.length} papers`)
+    }
 
-    // Analyze trends
-    const categoryTrends = datasetLoader.getCategoryTrends()
-    const authorStats = datasetLoader.getAuthorStats()
+    if (formData.publicationYearFrom || formData.publicationYearTo) {
+      filteredPapers = datasetLoader.filterByYearRange(
+        formData.publicationYearFrom,
+        formData.publicationYearTo,
+        filteredPapers,
+      )
+      console.log(`📅 After year range filter: ${filteredPapers.length} papers`)
+    }
+
+    if (formData.authorName) {
+      filteredPapers = datasetLoader.filterByAuthor(formData.authorName, filteredPapers)
+      console.log(`✍️ After author filter: ${filteredPapers.length} papers`)
+    }
+
+    if (formData.journalOrDoi) {
+      filteredPapers = datasetLoader.filterByJournalOrDoi(formData.journalOrDoi, filteredPapers)
+      console.log(`📄 After journal/DOI filter: ${filteredPapers.length} papers`)
+    }
+
+    // If no papers match after all filters, return an empty result set
+    if (filteredPapers.length === 0) {
+      console.log("⚠️ No papers found after applying all filters.")
+      return {
+        researchFields: [],
+        researchers: [],
+        insights: {
+          totalPapers: 0,
+          trendingFields: [],
+          recommendedActions: ["No papers found matching your criteria. Try broadening your search."],
+          datasetInfo: {
+            loadedPapers: dataset.length,
+            dateRange: this.getDateRange(dataset),
+            topCategories: [],
+            fieldDistribution: {},
+          },
+        },
+      }
+    }
+
+    // Analyze trends based on the filtered papers
+    const categoryTrends = datasetLoader.getCategoryTrends(filteredPapers)
+    const authorStats = datasetLoader.getAuthorStats(filteredPapers)
 
     // Generate research fields analysis
-    const researchFields = this.analyzeResearchFields(relevantPapers, categoryTrends)
+    const researchFields = this.analyzeResearchFields(filteredPapers, categoryTrends)
 
     // Find top researchers
-    const researchers = this.findTopResearchers(relevantPapers, authorStats)
+    const researchers = this.findTopResearchers(filteredPapers, authorStats)
 
     // Create insights
-    const insights = this.generateInsights(dataset, relevantPapers, categoryTrends, formData)
+    const insights = this.generateInsights(dataset, filteredPapers, categoryTrends, formData)
 
     console.log(
       `🎉 Analysis complete! Found ${researchFields.length} research opportunities and ${researchers.length} key researchers`,

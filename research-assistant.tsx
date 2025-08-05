@@ -21,6 +21,10 @@ export default function Component() {
     skills: [],
     ageGroup: "",
     industryExperience: "",
+    publicationYearFrom: "", // New state
+    publicationYearTo: "", // New state
+    authorName: "", // New state
+    journalOrDoi: "", // New state
   })
   const [showResults, setShowResults] = useState(false)
   const [skillInput, setSkillInput] = useState("")
@@ -253,6 +257,54 @@ export default function Component() {
                     placeholder="0"
                     value={formData.yearsOfExperience}
                     onChange={(e) => setFormData((prev) => ({ ...prev, yearsOfExperience: e.target.value }))}
+                  />
+                </div>
+
+                {/* Publication Year Range */}
+                <div className="space-y-2">
+                  <Label htmlFor="pubYearFrom">Publication Year (From)</Label>
+                  <Input
+                    id="pubYearFrom"
+                    type="number"
+                    min="1990" // ArXiv started in 1991
+                    max={new Date().getFullYear().toString()}
+                    placeholder="e.g., 2020"
+                    value={formData.publicationYearFrom}
+                    onChange={(e) => setFormData((prev) => ({ ...prev, publicationYearFrom: e.target.value }))}
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="pubYearTo">Publication Year (To)</Label>
+                  <Input
+                    id="pubYearTo"
+                    type="number"
+                    min="1990"
+                    max={new Date().getFullYear().toString()}
+                    placeholder="e.g., 2024"
+                    value={formData.publicationYearTo}
+                    onChange={(e) => setFormData((prev) => ({ ...prev, publicationYearTo: e.target.value }))}
+                  />
+                </div>
+
+                {/* Author Name */}
+                <div className="space-y-2">
+                  <Label htmlFor="authorName">Author Name</Label>
+                  <Input
+                    id="authorName"
+                    placeholder="e.g., Albert Einstein"
+                    value={formData.authorName}
+                    onChange={(e) => setFormData((prev) => ({ ...prev, authorName: e.target.value }))}
+                  />
+                </div>
+
+                {/* Journal/DOI */}
+                <div className="space-y-2">
+                  <Label htmlFor="journalOrDoi">Journal Reference or DOI</Label>
+                  <Input
+                    id="journalOrDoi"
+                    placeholder="e.g., Phys. Rev. Lett. or 10.1103/..."
+                    value={formData.journalOrDoi}
+                    onChange={(e) => setFormData((prev) => ({ ...prev, journalOrDoi: e.target.value }))}
                   />
                 </div>
 
