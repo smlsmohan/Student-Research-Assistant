@@ -12,7 +12,7 @@ export type AnalysisResults = RealAnalysisResults
 
 export class ResearchService {
   async analyzeOpportunities(formData: FormData): Promise<AnalysisResults> {
-    console.log("🔍 Starting real dataset analysis...")
+    console.log("🔍 Starting real dataset analysis from Supabase...")
     console.log("📊 User profile:", formData)
 
     try {

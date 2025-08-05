@@ -30,10 +30,10 @@ export function AnalysisResultsComponent({ results, isLoading }: AnalysisResults
         <div className="text-center">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
           <h2 className="text-2xl font-bold text-slate-900 mb-2">Analyzing Real arXiv Dataset</h2>
-          <p className="text-slate-600">Loading and processing actual research papers...</p>
+          <p className="text-slate-600">Connecting to Supabase and processing actual research papers...</p>
           <div className="mt-4 space-y-2 text-sm text-slate-500">
-            <p>📥 Loading dataset from source</p>
-            <p>🔍 Parsing paper metadata and abstracts</p>
+            <p>🔗 Establishing secure database connection</p>
+            <p>📥 Fetching paper metadata and abstracts</p>
             <p>📊 Calculating growth trends and statistics</p>
             <p>🎯 Matching papers to your profile</p>
             <p>👨‍🔬 Identifying key researchers</p>
@@ -108,7 +108,10 @@ export function AnalysisResultsComponent({ results, isLoading }: AnalysisResults
                 <div className="flex justify-between">
                   <span>Field Relevance:</span>
                   <span className="font-medium text-green-600">
-                    {Math.round((results.insights.totalPapers / results.insights.datasetInfo.loadedPapers) * 100)}%
+                    {results.insights.datasetInfo.loadedPapers > 0
+                      ? Math.round((results.insights.totalPapers / results.insights.datasetInfo.loadedPapers) * 100)
+                      : 0}
+                    %
                   </span>
                 </div>
                 <div className="flex justify-between">
@@ -300,12 +303,14 @@ export function AnalysisResultsComponent({ results, isLoading }: AnalysisResults
           <div className="flex items-center gap-2 text-sm text-slate-600">
             <BookOpen className="h-4 w-4" />
             <span>
-              ✅ Analysis based on <strong>real arXiv dataset</strong> from Cornell University. Processed{" "}
+              ✅ Analysis based on <strong>real arXiv dataset</strong> fetched from Supabase. Processed{" "}
               {results.insights.datasetInfo.loadedPapers.toLocaleString()} actual papers spanning{" "}
               {results.insights.datasetInfo.dateRange}. Found {results.insights.totalPapers.toLocaleString()} papers
               directly relevant to your profile (
-              {Math.round((results.insights.totalPapers / results.insights.datasetInfo.loadedPapers) * 100)}% match
-              rate).
+              {results.insights.datasetInfo.loadedPapers > 0
+                ? Math.round((results.insights.totalPapers / results.insights.datasetInfo.loadedPapers) * 100)
+                : 0}
+              % match rate).
             </span>
           </div>
         </CardContent>

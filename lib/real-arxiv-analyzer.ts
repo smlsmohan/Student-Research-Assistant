@@ -55,6 +55,18 @@ export class RealArxivAnalyzer {
     "q-bio.BM": "Biomolecules",
     "physics.bio-ph": "Biological Physics",
     "cs.CG": "Computational Geometry",
+    "econ.EM": "Econometrics", // Added for completeness
+    "stat.ML": "Statistical Machine Learning", // Added for completeness
+    "physics.gen-ph": "General Physics", // Added for completeness
+    "cond-mat": "Condensed Matter", // Added for completeness
+    math: "Mathematics (General)", // Added for completeness
+    physics: "Physics (General)", // Added for completeness
+    "q-fin": "Quantitative Finance", // Added for completeness
+    "stat.AP": "Applications (Statistics)", // Added for completeness
+    "physics.app-ph": "Applied Physics", // Added for completeness
+    "physics.chem-ph": "Chemical Physics", // Added for completeness
+    "physics.ao-ph": "Atmospheric and Oceanic Physics", // Added for completeness
+    "physics.geo-ph": "Geophysics", // Added for completeness
   }
 
   async analyzeUserProfile(formData: {
@@ -62,11 +74,11 @@ export class RealArxivAnalyzer {
     skills: string[]
     yearsOfExperience: string
   }): Promise<RealAnalysisResults> {
-    console.log("🔄 Loading real arXiv dataset...")
+    console.log("🔄 Loading real arXiv dataset from Supabase...")
     await datasetLoader.loadDataset()
 
     const dataset = datasetLoader.getDataset()
-    console.log(`📊 Loaded ${dataset.length} real papers from arXiv`)
+    console.log(`📊 Loaded ${dataset.length} real papers from Supabase`)
 
     // Get papers relevant to user's field
     const fieldPapers = datasetLoader.searchByField(formData.fieldOfStudy)
@@ -139,9 +151,11 @@ export class RealArxivAnalyzer {
         fieldStats[category].papers.push(paper)
 
         // Extract authors
-        paper.authors_parsed.forEach(([lastName, firstName]) => {
-          fieldStats[category].authors.add(`${firstName} ${lastName}`.trim())
-        })
+        if (Array.isArray(paper.authors_parsed)) {
+          paper.authors_parsed.forEach(([lastName, firstName]) => {
+            fieldStats[category].authors.add(`${firstName} ${lastName}`.trim())
+          })
+        }
       })
     })
 
@@ -164,6 +178,8 @@ export class RealArxivAnalyzer {
           if (paper.authors.includes("DeepMind")) institutions.add("DeepMind")
           if (paper.authors.includes("MIT")) institutions.add("MIT")
           if (paper.authors.includes("Stanford")) institutions.add("Stanford University")
+          if (paper.authors.includes("ETH Zurich")) institutions.add("ETH Zurich")
+          if (paper.authors.includes("Cambridge")) institutions.add("University of Cambridge")
         })
 
         return {
@@ -191,9 +207,11 @@ export class RealArxivAnalyzer {
     // Find authors who appear in our relevant papers
     const relevantAuthors = new Set<string>()
     papers.forEach((paper) => {
-      paper.authors_parsed.forEach(([lastName, firstName]) => {
-        relevantAuthors.add(`${firstName} ${lastName}`.trim())
-      })
+      if (Array.isArray(paper.authors_parsed)) {
+        paper.authors_parsed.forEach(([lastName, firstName]) => {
+          relevantAuthors.add(`${firstName} ${lastName}`.trim())
+        })
+      }
     })
 
     return Object.entries(authorStats)
@@ -201,21 +219,25 @@ export class RealArxivAnalyzer {
       .sort(([, a], [, b]) => b.papers - a.papers)
       .slice(0, 4)
       .map(([author, stats]) => {
-        const authorPapers = papers.filter((paper) =>
-          paper.authors_parsed.some(([lastName, firstName]) => `${firstName} ${lastName}`.trim() === author),
-        )
-
         // Find most cited/important paper (simplified - using most recent)
         const topPaper = stats.recentPapers[0]?.title || "No recent papers"
 
-        // Estimate institution from paper patterns
+        // Estimate institution from paper patterns or common affiliations
         let institution = "Research Institution"
-        if (author.includes("Google") || stats.recentPapers.some((p) => p.authors.includes("Google"))) {
+        if (stats.recentPapers.some((p) => p.authors.includes("Google"))) {
           institution = "Google Research"
         } else if (stats.recentPapers.some((p) => p.authors.includes("OpenAI"))) {
           institution = "OpenAI"
         } else if (stats.recentPapers.some((p) => p.authors.includes("DeepMind"))) {
           institution = "DeepMind"
+        } else if (stats.recentPapers.some((p) => p.authors.includes("MIT"))) {
+          institution = "MIT"
+        } else if (stats.recentPapers.some((p) => p.authors.includes("Stanford"))) {
+          institution = "Stanford University"
+        } else if (stats.recentPapers.some((p) => p.authors.includes("ETH Zurich"))) {
+          institution = "ETH Zurich"
+        } else if (stats.recentPapers.some((p) => p.authors.includes("Cambridge"))) {
+          institution = "University of Cambridge"
         }
 
         return {
@@ -295,6 +317,7 @@ export class RealArxivAnalyzer {
   }
 
   private getDateRange(papers: ArxivDatasetEntry[]): string {
+    if (papers.length === 0) return "N/A"
     const dates = papers.map((p) => new Date(p.update_date))
     const minDate = new Date(Math.min(...dates.map((d) => d.getTime())))
     const maxDate = new Date(Math.max(...dates.map((d) => d.getTime())))
