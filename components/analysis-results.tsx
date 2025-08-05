@@ -15,8 +15,10 @@ import {
   Database,
   Calendar,
   BarChart3,
+  ArrowRight,
 } from "lucide-react"
 import type { AnalysisResults } from "../lib/research-service"
+import Link from "next/link" // Import Link
 
 interface AnalysisResultsProps {
   results: AnalysisResults
@@ -120,6 +122,14 @@ export function AnalysisResultsComponent({ results, isLoading }: AnalysisResults
                 </div>
               </div>
             </div>
+          </div>
+          <div className="mt-6 text-center">
+            <Link href="/papers">
+              <Button variant="outline" className="bg-white">
+                View All {results.insights.datasetInfo.loadedPapers.toLocaleString()} Papers
+                <ArrowRight className="ml-2 h-4 w-4" />
+              </Button>
+            </Link>
           </div>
         </CardContent>
       </Card>

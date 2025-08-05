@@ -39,9 +39,8 @@ function parseAuthorsParsedString(authorsParsedStr: string): Array<[string, stri
 export async function getArxivPapersFromSupabase(): Promise<ArxivDatasetEntry[]> {
   console.log("Server Action: Fetching arXiv data from Supabase...")
   try {
-    // Fetch a limited number of papers for demonstration
-    // In a real app, you'd implement pagination or more specific queries
-    const { data, error } = await supabase.from("papers").select("*").limit(100) // Fetching 100 papers for demo
+    // Fetch ALL papers by removing the limit
+    const { data, error } = await supabase.from("papers").select("*")
 
     if (error) {
       console.error("Server Action Error fetching papers from Supabase:", error)
