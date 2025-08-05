@@ -72,8 +72,8 @@ export default function LandingPage() {
                 Start Free Search <ArrowRight className="ml-2 h-5 w-5" />
               </Button>
             </Link>
-            {/* Updated "Watch Demo" button to be a placeholder link */}
-            <Link href="#" passHref>
+            {/* Updated "Watch Demo" button to link to the "How It Works" section */}
+            <Link href="#how-it-works" passHref>
               <Button size="lg" variant="outline" className="text-lg px-8 py-4 bg-transparent">
                 Watch Demo
               </Button>
@@ -202,7 +202,7 @@ export default function LandingPage() {
       </section>
 
       {/* How It Works */}
-      <section className="py-20 px-4 bg-white/50">
+      <section id="how-it-works" className="py-20 px-4 bg-white/50">
         <div className="max-w-6xl mx-auto">
           <div className="text-center mb-16">
             <h2 className="text-4xl font-bold text-slate-900 mb-4">How ResearchPath Works</h2>

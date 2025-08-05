@@ -82,48 +82,6 @@ export const categoryNames: Record<string, string> = {
   "q-bio.GN": "Genomics", // Added for completeness
 }
 
-// Mapping of common skill keywords to relevant arXiv categories
-const skillToCategoryMap: Record<string, string[]> = {
-  physics: [
-    "physics",
-    "hep-ph",
-    "astro-ph",
-    "gr-qc",
-    "physics.gen-ph",
-    "physics.app-ph",
-    "physics.chem-ph",
-    "physics.ao-ph",
-    "physics.geo-ph",
-    "physics.soc-ph",
-    "physics.med-ph",
-    "physics.bio-ph",
-  ],
-  ai: ["cs.AI", "cs.LG", "stat.ML"],
-  "machine learning": ["cs.LG", "stat.ML", "cs.AI"],
-  "computer vision": ["cs.CV"],
-  "natural language processing": ["cs.CL"],
-  nlp: ["cs.CL"],
-  robotics: ["cs.RO"],
-  biology: ["q-bio", "q-bio.BM", "q-bio.GN", "physics.bio-ph"],
-  genomics: ["q-bio.GN"],
-  "materials science": ["cond-mat.mtrl-sci"],
-  quantum: ["quant-ph"],
-  astronomy: ["astro-ph"],
-  mathematics: ["math", "math.CO", "math.AG", "math.NT", "math.OC"],
-  statistics: ["stat.ML", "stat.AP"],
-  "data science": ["cs.LG", "stat.ML", "cs.AI"],
-  cryptography: ["cs.CR"],
-  security: ["cs.CR"],
-  optimization: ["math.OC"],
-  econometrics: ["econ.EM"],
-  chemistry: ["physics.chem-ph"],
-  environmental: ["physics.ao-ph", "physics.geo-ph"],
-  "computer science": ["cs.AI", "cs.CL", "cs.CV", "cs.LG", "cs.RO", "cs.CG", "cs.CR"],
-  engineering: ["cs.RO", "physics.app-ph", "cond-mat.mtrl-sci"],
-  "social science": ["physics.soc-ph", "econ.EM", "q-fin", "stat.AP"],
-  // Add more mappings as needed
-}
-
 export class DatasetLoader {
   private dataset: ArxivDatasetEntry[] = []
   private isLoaded = false
@@ -161,28 +119,8 @@ export class DatasetLoader {
     if (keywords.length === 0) return []
 
     return this.dataset.filter((paper) => {
-      const searchText = `${paper.title} ${paper.abstract}`.toLowerCase()
-      const paperCategories = paper.categories.split(" ").map((cat) => cat.toLowerCase())
-
-      return keywords.some((keyword) => {
-        const lowerKeyword = keyword.toLowerCase()
-
-        // Check if keyword is in title or abstract
-        if (searchText.includes(lowerKeyword)) {
-          return true
-        }
-
-        // Check if keyword maps to any of the paper's categories
-        const mappedCategories = skillToCategoryMap[lowerKeyword]
-        if (
-          mappedCategories &&
-          mappedCategories.some((mappedCat) => paperCategories.includes(mappedCat.toLowerCase()))
-        ) {
-          return true
-        }
-
-        return false
-      })
+      const searchText = `${paper.title} ${paper.abstract} ${paper.categories}`.toLowerCase() // Include categories in search
+      return keywords.some((keyword) => searchText.includes(keyword.toLowerCase()))
     })
   }
 
