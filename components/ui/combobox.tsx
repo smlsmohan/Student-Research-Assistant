@@ -34,17 +34,20 @@ export function Combobox({
           variant="outline"
           role="combobox"
           aria-expanded={open}
-          className="w-full justify-between bg-transparent"
+          className="w-full justify-between bg-transparent dark:bg-gray-700 dark:text-slate-100 dark:border-gray-600 dark:hover:bg-gray-600"
         >
           {value ? options.find((option) => option.value === value)?.label : placeholder}
-          <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+          <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50 dark:text-slate-400" />
         </Button>
       </PopoverTrigger>
-      <PopoverContent className="w-[--radix-popover-trigger-width] p-0">
-        <Command>
-          <CommandInput placeholder={searchPlaceholder} />
+      <PopoverContent className="w-[--radix-popover-trigger-width] p-0 dark:bg-gray-800 dark:border-gray-700">
+        <Command className="dark:bg-gray-800">
+          <CommandInput
+            placeholder={searchPlaceholder}
+            className="dark:bg-gray-700 dark:text-slate-100 dark:border-gray-600"
+          />
           <CommandList>
-            <CommandEmpty>{emptyMessage}</CommandEmpty>
+            <CommandEmpty className="dark:text-slate-300">{emptyMessage}</CommandEmpty>
             <CommandGroup>
               {options.map((option) => (
                 <CommandItem
@@ -54,6 +57,7 @@ export function Combobox({
                     onValueChange(option.value === value ? "" : option.value)
                     setOpen(false)
                   }}
+                  className="dark:text-slate-100 dark:hover:bg-gray-700"
                 >
                   <Check className={cn("mr-2 h-4 w-4", value === option.value ? "opacity-100" : "opacity-0")} />
                   {option.label}

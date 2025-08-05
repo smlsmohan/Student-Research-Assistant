@@ -86,8 +86,8 @@ export class DatasetLoader {
   private dataset: ArxivDatasetEntry[] = []
   private isLoaded = false
 
-  async loadDataset(): Promise<void> {
-    if (this.isLoaded) return
+  async loadDataset(forceReload = false): Promise<void> {
+    if (this.isLoaded && !forceReload) return
 
     try {
       console.log("Client-side: Requesting arXiv data via Server Action...")

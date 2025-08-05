@@ -18,12 +18,9 @@ export default function Component() {
     fieldOfStudy: "",
     yearsOfExperience: "",
     skills: [],
-    // Removed: ageGroup: "",
     industryExperience: "",
     publicationYearFrom: "",
     publicationYearTo: "",
-    // Removed: authorName: "",
-    // Removed: journalOrDoi: "",
   })
   const [showResults, setShowResults] = useState(false)
   const [skillInput, setSkillInput] = useState("")
@@ -211,25 +208,25 @@ export default function Component() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50 p-4">
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50 p-4 dark:from-gray-900 dark:to-blue-950 text-slate-900 dark:text-slate-100">
       <div className="mx-auto max-w-6xl space-y-8">
         {/* Header */}
         <div className="text-center space-y-4 py-8">
-          <h1 className="text-4xl font-bold text-slate-900">Student Research Assistant</h1>
-          <p className="text-lg text-slate-600 max-w-2xl mx-auto">
+          <h1 className="text-4xl font-bold text-slate-900 dark:text-slate-100">Student Research Assistant</h1>
+          <p className="text-lg text-slate-600 max-w-2xl mx-auto dark:text-slate-300">
             Discover research opportunities, funding programs, and connect with leading researchers in your field across
             Europe
           </p>
         </div>
 
         {/* Form Card */}
-        <Card className="shadow-lg border-0 bg-white/80 backdrop-blur-sm">
+        <Card className="shadow-lg border-0 bg-white/80 backdrop-blur-sm dark:bg-gray-800/80 dark:border-gray-700">
           <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <Search className="h-5 w-5 text-blue-600" />
+            <CardTitle className="flex items-center gap-2 dark:text-slate-100">
+              <Search className="h-5 w-5 text-blue-600 dark:text-blue-400" />
               Find Your Research Path
             </CardTitle>
-            <CardDescription>
+            <CardDescription className="dark:text-slate-300">
               Tell us about your background and interests to get personalized recommendations
             </CardDescription>
           </CardHeader>
@@ -238,7 +235,9 @@ export default function Component() {
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 {/* Field of Study - Using new Combobox */}
                 <div className="space-y-2">
-                  <Label htmlFor="field">Field of Study</Label>
+                  <Label htmlFor="field" className="dark:text-slate-100">
+                    Field of Study
+                  </Label>
                   <FieldOfStudyCombobox
                     value={formData.fieldOfStudy}
                     onValueChange={(value) => setFormData((prev) => ({ ...prev, fieldOfStudy: value }))}
@@ -247,7 +246,9 @@ export default function Component() {
 
                 {/* Years of Experience */}
                 <div className="space-y-2">
-                  <Label htmlFor="experience">Years of Research Experience</Label>
+                  <Label htmlFor="experience" className="dark:text-slate-100">
+                    Years of Research Experience
+                  </Label>
                   <Input
                     id="experience"
                     type="number"
@@ -256,12 +257,15 @@ export default function Component() {
                     placeholder="0"
                     value={formData.yearsOfExperience}
                     onChange={(e) => setFormData((prev) => ({ ...prev, yearsOfExperience: e.target.value }))}
+                    className="dark:bg-gray-700 dark:text-slate-100 dark:border-gray-600"
                   />
                 </div>
 
                 {/* Publication Year Range */}
                 <div className="space-y-2">
-                  <Label htmlFor="pubYearFrom">Publication Year (From)</Label>
+                  <Label htmlFor="pubYearFrom" className="dark:text-slate-100">
+                    Publication Year (From)
+                  </Label>
                   <Input
                     id="pubYearFrom"
                     type="number"
@@ -270,10 +274,13 @@ export default function Component() {
                     placeholder="e.g., 2020"
                     value={formData.publicationYearFrom}
                     onChange={(e) => setFormData((prev) => ({ ...prev, publicationYearFrom: e.target.value }))}
+                    className="dark:bg-gray-700 dark:text-slate-100 dark:border-gray-600"
                   />
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="pubYearTo">Publication Year (To)</Label>
+                  <Label htmlFor="pubYearTo" className="dark:text-slate-100">
+                    Publication Year (To)
+                  </Label>
                   <Input
                     id="pubYearTo"
                     type="number"
@@ -282,34 +289,37 @@ export default function Component() {
                     placeholder="e.g., 2024"
                     value={formData.publicationYearTo}
                     onChange={(e) => setFormData((prev) => ({ ...prev, publicationYearTo: e.target.value }))}
+                    className="dark:bg-gray-700 dark:text-slate-100 dark:border-gray-600"
                   />
                 </div>
 
-                {/* Removed: Author Name */}
-                {/* Removed: Journal/DOI */}
-                {/* Removed: Age Group */}
-
                 {/* Industry Experience */}
                 <div className="space-y-2">
-                  <Label htmlFor="industry">Industry Experience</Label>
+                  <Label htmlFor="industry" className="dark:text-slate-100">
+                    Industry Experience
+                  </Label>
                   <Input
                     id="industry"
                     placeholder="e.g., Software development, Healthcare, Finance"
                     value={formData.industryExperience}
                     onChange={(e) => setFormData((prev) => ({ ...prev, industryExperience: e.target.value }))}
+                    className="dark:bg-gray-700 dark:text-slate-100 dark:border-gray-600"
                   />
                 </div>
               </div>
 
               {/* Skills */}
               <div className="space-y-2">
-                <Label htmlFor="skills">Skills & Technologies</Label>
+                <Label htmlFor="skills" className="dark:text-slate-100">
+                  Skills & Technologies
+                </Label>
                 <Input
                   id="skills"
                   placeholder="Type a skill and press Enter"
                   value={skillInput}
                   onChange={(e) => setSkillInput(e.target.value)}
                   onKeyDown={handleAddSkill}
+                  className="dark:bg-gray-700 dark:text-slate-100 dark:border-gray-600"
                 />
                 {formData.skills.length > 0 && (
                   <div className="flex flex-wrap gap-2 mt-2">
@@ -317,7 +327,7 @@ export default function Component() {
                       <Badge
                         key={index}
                         variant="secondary"
-                        className="cursor-pointer hover:bg-red-100"
+                        className="cursor-pointer hover:bg-red-100 dark:bg-gray-700 dark:text-slate-100 dark:hover:bg-red-900"
                         onClick={() => removeSkill(skill)}
                       >
                         {skill} ×
@@ -327,7 +337,10 @@ export default function Component() {
                 )}
               </div>
 
-              <Button type="submit" className="w-full bg-blue-600 hover:bg-blue-700 text-white py-3">
+              <Button
+                type="submit"
+                className="w-full bg-blue-600 hover:bg-blue-700 text-white py-3 dark:bg-blue-700 dark:hover:bg-blue-600"
+              >
                 <Search className="mr-2 h-4 w-4" />
                 Search Opportunities
               </Button>

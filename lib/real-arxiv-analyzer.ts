@@ -47,12 +47,9 @@ export class RealArxivAnalyzer {
     yearsOfExperience: string
     publicationYearFrom?: string
     publicationYearTo?: string
-    // Removed: authorName?: string
-    // Removed: journalOrDoi?: string
-    // Removed: ageGroup?: string // This was not used for filtering, only for type definition
   }): Promise<RealAnalysisResults> {
     console.log("🔄 Loading real arXiv dataset from Supabase...")
-    await datasetLoader.loadDataset()
+    await datasetLoader.loadDataset(true) // Force reload dataset on every analysis
 
     const dataset = datasetLoader.getDataset()
     console.log(`📊 Loaded ${dataset.length} real papers from Supabase`)
@@ -78,16 +75,6 @@ export class RealArxivAnalyzer {
       )
       console.log(`📅 After year range filter: ${filteredPapers.length} papers`)
     }
-
-    // Removed: if (formData.authorName) {
-    // Removed:   filteredPapers = datasetLoader.filterByAuthor(formData.authorName, filteredPapers)
-    // Removed:   console.log(`✍️ After author filter: ${filteredPapers.length} papers`)
-    // Removed: }
-
-    // Removed: if (formData.journalOrDoi) {
-    // Removed:   filteredPapers = datasetLoader.filterByJournalOrDoi(formData.journalOrDoi, filteredPapers)
-    // Removed:   console.log(`📄 After journal/DOI filter: ${filteredPapers.length} papers`)
-    // Removed: }
 
     // If no papers match after all filters, return an empty result set
     if (filteredPapers.length === 0) {
