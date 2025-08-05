@@ -72,9 +72,12 @@ export default function LandingPage() {
                 Start Free Search <ArrowRight className="ml-2 h-5 w-5" />
               </Button>
             </Link>
-            <Button size="lg" variant="outline" className="text-lg px-8 py-4 bg-transparent">
-              Watch Demo
-            </Button>
+            {/* Updated "Watch Demo" button to be a placeholder link */}
+            <Link href="#" passHref>
+              <Button size="lg" variant="outline" className="text-lg px-8 py-4 bg-transparent">
+                Watch Demo
+              </Button>
+            </Link>
           </div>
           <p className="text-sm text-slate-500 mt-4">✨ First 5 searches completely free • No credit card required</p>
         </div>

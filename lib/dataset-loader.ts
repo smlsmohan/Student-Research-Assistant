@@ -3,15 +3,15 @@ import { getArxivPapersFromSupabase } from "@/app/actions/arxiv-data" // Import 
 
 export interface ArxivDatasetEntry {
   id: string
-  submitter?: string // Optional as it might not be in your DB
+  submitter?: string // Optional
   authors: string
   title: string
   comments?: string
   "journal-ref"?: string
-  doi?: string
-  "report-no"?: string
+  doi?: string // Optional
+  "report-no"?: string // Optional
   categories: string // Assuming this is a string like "cs.CL cs.AI"
-  license?: string
+  license?: string // Optional
   abstract: string
   versions?: Array<{
     // Optional, might not be in your DB
@@ -20,6 +20,66 @@ export interface ArxivDatasetEntry {
   }>
   update_date: string // Should be a date string
   authors_parsed: Array<[string, string, string]> // Assuming this is stored as JSON string in DB
+}
+
+// Exported for use in FieldOfStudyCombobox
+export const fieldMap: Record<string, string[]> = {
+  "computer-science": ["cs.AI", "cs.CL", "cs.CV", "cs.LG", "cs.RO", "cs.CG"],
+  physics: [
+    "hep-ph",
+    "gr-qc",
+    "astro-ph",
+    "physics",
+    "cond-mat",
+    "physics.gen-ph",
+    "physics.app-ph",
+    "physics.chem-ph",
+    "physics.ao-ph",
+    "physics.geo-ph",
+  ],
+  mathematics: ["math.CO", "math.AG", "math.NT", "math"],
+  "life-sciences": ["q-bio", "physics.bio-ph", "q-bio.BM", "q-bio.GN"],
+  engineering: ["cs.RO", "physics.app-ph", "cond-mat.mtrl-sci"],
+  chemistry: ["physics.chem-ph", "cond-mat"],
+  environmental: ["physics.ao-ph", "physics.geo-ph"],
+  "social-sciences": ["econ", "q-fin", "stat.AP", "econ.EM", "physics.soc-ph"],
+  other: ["gen-ph", "nlin", "quant-ph"], // General/misc categories
+}
+
+// Exported for use in FieldOfStudyCombobox and RealArxivAnalyzer
+export const categoryNames: Record<string, string> = {
+  "cs.AI": "Artificial Intelligence",
+  "cs.CL": "Natural Language Processing",
+  "cs.CV": "Computer Vision",
+  "cs.LG": "Machine Learning",
+  "cs.RO": "Robotics",
+  "hep-ph": "High Energy Physics - Phenomenology",
+  "gr-qc": "General Relativity and Quantum Cosmology",
+  "astro-ph": "Astrophysics",
+  "astro-ph.HE": "High Energy Astrophysical Phenomena",
+  "math.CO": "Combinatorics",
+  "math.AG": "Algebraic Geometry",
+  "q-bio": "Quantitative Biology",
+  "q-bio.BM": "Biomolecules",
+  "physics.bio-ph": "Biological Physics",
+  "cs.CG": "Computational Geometry",
+  "econ.EM": "Econometrics",
+  "stat.ML": "Statistical Machine Learning",
+  "physics.gen-ph": "General Physics",
+  "cond-mat": "Condensed Matter",
+  math: "Mathematics (General)",
+  physics: "Physics (General)",
+  "q-fin": "Quantitative Finance",
+  "stat.AP": "Applications (Statistics)",
+  "physics.app-ph": "Applied Physics",
+  "physics.chem-ph": "Chemical Physics",
+  "physics.ao-ph": "Atmospheric and Oceanic Physics",
+  "physics.geo-ph": "Geophysics",
+  "cond-mat.mtrl-sci": "Materials Science", // Added for completeness
+  "physics.med-ph": "Medical Physics", // Added for completeness
+  "math.OC": "Optimization and Control", // Added for completeness
+  "physics.soc-ph": "Social Physics", // Added for completeness
+  "q-bio.GN": "Genomics", // Added for completeness
 }
 
 export class DatasetLoader {
@@ -50,18 +110,6 @@ export class DatasetLoader {
   }
 
   searchByField(field: string): ArxivDatasetEntry[] {
-    const fieldMap: Record<string, string[]> = {
-      "computer-science": ["cs.AI", "cs.CL", "cs.CV", "cs.LG", "cs.RO", "cs.CG"],
-      physics: ["hep-ph", "gr-qc", "astro-ph", "physics", "cond-mat"],
-      mathematics: ["math.CO", "math.AG", "math.NT", "math"],
-      "life-sciences": ["q-bio", "physics.bio-ph"],
-      engineering: ["cs.RO", "physics.app-ph"],
-      chemistry: ["physics.chem-ph", "cond-mat"],
-      environmental: ["physics.ao-ph", "physics.geo-ph"],
-      "social-sciences": ["econ", "q-fin", "stat.AP"], // Added for completeness
-      other: ["gen-ph", "nlin", "quant-ph"], // General/misc categories
-    }
-
     const relevantCategories = fieldMap[field] || []
 
     return this.dataset.filter((paper) => relevantCategories.some((cat) => paper.categories.includes(cat)))
